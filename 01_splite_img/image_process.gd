@@ -34,10 +34,14 @@ func _on_button_pressed():
 		print("File open faild");
 		img.free()
 		return
-	cut_pixels(img, int($hx.text), int($zx.text))
-
 	
-func cut_pixels(image: Image, wn: int, hn: int):
+	var farr = filename.split(".")[-1]
+	var imgdir = filename.left(-farr.length()-1)
+	cut_pixels(img, imgdir,int($hx.text), int($zx.text))
+	return
+	
+func cut_pixels(image: Image, imgdir: String, wn: int, hn: int):
+	DirAccess.make_dir_absolute(imgdir)
 	var t = 1
 	var width = image.get_width()
 	var height = image.get_height()
@@ -51,14 +55,14 @@ func cut_pixels(image: Image, wn: int, hn: int):
 			frame_image = Image.create_empty(imgw, imgh, false, image.get_format())
 			## 确保不超出图片边界
 			var rect = Rect2(x, y, imgw, imgh)
-			print(rect)
+			#print(rect)
 			rect = rect.intersection(Rect2(0, 0, imgw, imgh))
-			print(rect)
-			print(str(t)+":---------------------------")
+			#print(rect)
+			#print(str(t)+":---------------------------")
 			
 			#
 			frame_image.blit_rect(image, Rect2(x, y, width, height), Vector2(0, 0))
-			frame_image.save_png("res://resouce/"+str(t)+".png")
+			frame_image.save_png(imgdir+"/"+str(t)+".png")
 			t += 1
 			#
 			var texture := ImageTexture.create_from_image(frame_image)
